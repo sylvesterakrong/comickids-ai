@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DownloadIcon, RefreshCcw } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -11,6 +11,13 @@ interface ComicGeneratorProps {
 const ComicGenerator: React.FC<ComicGeneratorProps> = ({ subject, topic }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isGenerated, setIsGenerated] = useState(false);
+  
+  // Auto-generate when component mounts with valid props
+  useEffect(() => {
+    if (topic) {
+      handleGenerateComic();
+    }
+  }, [topic]);
   
   const handleGenerateComic = () => {
     if (!topic) {
@@ -35,40 +42,29 @@ const ComicGenerator: React.FC<ComicGeneratorProps> = ({ subject, topic }) => {
   return (
     <div className="rounded-xl border border-ghana-lightBrown bg-white p-6 shadow-md">
       <div className="mb-6 text-center">
-        <h2 className="mb-2 text-2xl font-bold text-ghana-green">Comic Generator</h2>
-        <p className="text-ghana-brown">Create visual learning materials with AI</p>
+        <h2 className="mb-2 text-2xl font-bold text-ghana-green">Your Comic</h2>
+        <p className="text-ghana-brown">Visual learning materials for your classroom</p>
       </div>
       
       {!isGenerated ? (
         <div className="flex flex-col gap-4">
           <div className="text-center">
-            <button
-              onClick={handleGenerateComic}
-              disabled={isLoading}
-              className="relative inline-flex w-full items-center justify-center rounded-lg bg-ghana-green px-6 py-3 font-semibold text-white transition-colors hover:bg-ghana-lightGreen focus:outline-none focus:ring-2 focus:ring-ghana-green focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70 md:w-auto"
-            >
-              {isLoading ? (
-                <>
-                  <RefreshCcw className="mr-2 h-4 w-4 animate-spin-slow" />
-                  <span className="loading-dots">Generating with AI</span>
-                </>
-              ) : (
-                "Generate Comic"
-              )}
-            </button>
+            {/* Loading state */}
+            <div className="inline-flex items-center justify-center rounded-lg bg-ghana-green px-6 py-3 font-semibold text-white">
+              <RefreshCcw className="mr-2 h-4 w-4 animate-spin-slow" />
+              <span className="loading-dots">Generating your comic</span>
+            </div>
           </div>
           
-          {isLoading && (
-            <div className="mt-6">
-              <div className="mb-2 h-4 w-full animate-pulse rounded-full bg-ghana-lightBrown/30"></div>
-              <div className="h-4 w-3/4 animate-pulse rounded-full bg-ghana-lightBrown/30"></div>
-              <div className="mt-6 grid grid-cols-3 gap-4">
-                {[...Array(3)].map((_, i) => (
-                  <div key={i} className="aspect-[4/3] animate-pulse rounded-lg bg-ghana-lightBrown/30"></div>
-                ))}
-              </div>
+          <div className="mt-6">
+            <div className="mb-2 h-4 w-full animate-pulse rounded-full bg-ghana-lightBrown/30"></div>
+            <div className="h-4 w-3/4 animate-pulse rounded-full bg-ghana-lightBrown/30"></div>
+            <div className="mt-6 grid grid-cols-3 gap-4">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="aspect-[4/3] animate-pulse rounded-lg bg-ghana-lightBrown/30"></div>
+              ))}
             </div>
-          )}
+          </div>
         </div>
       ) : (
         <div className="space-y-6">
@@ -120,9 +116,9 @@ const ComicGenerator: React.FC<ComicGeneratorProps> = ({ subject, topic }) => {
                   </div>
                   <div className="flex h-1/4 items-center justify-center bg-white p-2">
                     <p className="text-center text-xs">
-                      {i === 0 && `Understanding ${topic}: First we learn what ${topic.toLowerCase()} means`}
-                      {i === 1 && `Using ${topic.toLowerCase()} in daily activities at the market`}
-                      {i === 2 && `Practice: Students try ${topic.toLowerCase()} themselves`}
+                      {i === 0 && `Understanding ${topic.split(' ').slice(0, 2).join(' ')}: First we learn what it means`}
+                      {i === 1 && `Using this concept in daily activities at the market`}
+                      {i === 2 && `Practice: Students try it themselves`}
                     </p>
                   </div>
                 </div>
