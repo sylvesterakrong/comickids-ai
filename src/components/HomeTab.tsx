@@ -39,7 +39,7 @@ const HomeTab: React.FC = () => {
     if (!userInput.trim()) return;
     
     // Add user message
-    const newMessages = [...messages, { role: 'user', content: userInput }];
+    const newMessages = [...messages, { role: 'user' as const, content: userInput }];
     setMessages(newMessages);
     
     // Process the message to extract topic and subject
@@ -76,7 +76,7 @@ const HomeTab: React.FC = () => {
     // Generate bot response
     setTimeout(() => {
       const botResponse = `I'll create a comic about "${potentialTopic}" for ${detectedSubject} class. Is that correct? If yes, click "Generate Comic" below, or you can provide more details.`;
-      setMessages(prev => [...prev, { role: 'bot', content: botResponse }]);
+      setMessages(prev => [...prev, { role: 'bot' as const, content: botResponse }]);
       
       // Show the generator
       setShowGenerator(true);
@@ -98,7 +98,7 @@ const HomeTab: React.FC = () => {
     
     // Add a message indicating generation is starting
     setMessages(prev => [...prev, { 
-      role: 'bot', 
+      role: 'bot' as const, 
       content: `Starting to generate your comic about "${topic}" for ${subject} class...` 
     }]);
   };
