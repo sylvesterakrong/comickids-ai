@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -52,6 +53,17 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
+				// Ghana theme colors
+				ghana: {
+					green: '#5C9A4F',
+					lightGreen: '#8BC34A',
+					orange: '#FF9800',
+					lightOrange: '#FFA726',
+					brown: '#8D6E63',
+					lightBrown: '#D7CCC8',
+					cream: '#FFF8E1',
+					accent: '#FF7043',
+				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',
@@ -84,11 +96,24 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'pulse-opacity': {
+					'0%, 100%': { opacity: '1' },
+					'50%': { opacity: '0.6' }
+				},
+				'spin-slow': {
+					'0%': { transform: 'rotate(0deg)' },
+					'100%': { transform: 'rotate(360deg)' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'pulse-opacity': 'pulse-opacity 1.5s ease-in-out infinite',
+				'spin-slow': 'spin-slow 3s linear infinite'
+			},
+			fontFamily: {
+				'nunito': ['Nunito', 'sans-serif'],
 			}
 		}
 	},
