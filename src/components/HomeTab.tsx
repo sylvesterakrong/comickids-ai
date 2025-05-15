@@ -6,6 +6,7 @@ import { Send, Bot, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
+import { api } from '@/services/api';
 
 const HomeTab: React.FC = () => {
   const [topic, setTopic] = useState('');
@@ -18,6 +19,7 @@ const HomeTab: React.FC = () => {
   ]);
   const [userInput, setUserInput] = useState('');
   const [showGenerator, setShowGenerator] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -35,52 +37,53 @@ const HomeTab: React.FC = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const handleSendMessage = () => {
-    if (!userInput.trim()) return;
+  const handleSendMessage = async () => {
+    if (!userInput.trim() || isProcessing) return;
     
     // Add user message
     const newMessages = [...messages, { role: 'user' as const, content: userInput }];
     setMessages(newMessages);
     
     // Process the message to extract topic and subject
-    processUserInput(userInput);
+    await processUserInput(userInput);
     
     // Clear input field
     setUserInput('');
   };
   
-  const processUserInput = (input: string) => {
-    const lowerInput = input.toLowerCase();
+  const processUserInput = async (input: string) => {
+    setIsProcessing(true);
     
-    // Check if message contains subject indicators
-    let detectedSubject = 'Math'; // Default
-    if (lowerInput.includes('science') || lowerInput.includes('biology') || 
-        lowerInput.includes('chemistry') || lowerInput.includes('physics') ||
-        lowerInput.includes('plant') || lowerInput.includes('animal')) {
-      detectedSubject = 'Science';
-    } else if (lowerInput.includes('citizenship') || lowerInput.includes('community') || 
-              lowerInput.includes('society') || lowerInput.includes('culture') ||
-              lowerInput.includes('helper') || lowerInput.includes('profession')) {
-      detectedSubject = 'Citizenship';
-    }
-    
-    // Extract potential topic (simply take the whole input as the topic for now)
-    const potentialTopic = input;
-    
-    // Set the detected subject
-    setSubject(detectedSubject);
-    
-    // Set the topic
-    setTopic(potentialTopic);
-    
-    // Generate bot response
-    setTimeout(() => {
-      const botResponse = `I'll create a comic about "${potentialTopic}" for ${detectedSubject} class. Is that correct? If yes, click "Generate Comic" below, or you can provide more details.`;
-      setMessages(prev => [...prev, { role: 'bot' as const, content: botResponse }]);
+    try {
+      // Call Django API to process the chat message
+      const result = await api.processChatMessage(input);
       
-      // Show the generator
-      setShowGenerator(true);
-    }, 500);
+      if (result.success && result.data) {
+        // Set the detected subject and topic from API response
+        setSubject(result.data.subject);
+        setTopic(result.data.topic);
+        
+        // Add bot response
+        setMessages(prev => [...prev, { 
+          role: 'bot' as const, 
+          content: result.data.response 
+        }]);
+        
+        // Show the generator
+        setShowGenerator(true);
+      } else {
+        throw new Error(result.error || 'Failed to process message');
+      }
+    } catch (error) {
+      console.error('Error processing message:', error);
+      // Add error message
+      setMessages(prev => [...prev, { 
+        role: 'bot' as const, 
+        content: "Sorry, I'm having trouble processing your request. Please try again." 
+      }]);
+    } finally {
+      setIsProcessing(false);
+    }
   };
   
   const handleKeyDown = (e: React.KeyboardEvent) => {

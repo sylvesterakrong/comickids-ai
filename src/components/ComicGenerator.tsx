@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { DownloadIcon, RefreshCcw } from 'lucide-react';
 import { toast } from 'sonner';
+import { api, ComicData } from '@/services/api';
 
 interface ComicGeneratorProps {
   subject: string;
@@ -11,6 +12,7 @@ interface ComicGeneratorProps {
 const ComicGenerator: React.FC<ComicGeneratorProps> = ({ subject, topic }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isGenerated, setIsGenerated] = useState(false);
+  const [comicData, setComicData] = useState<ComicData | null>(null);
   
   // Auto-generate when component mounts with valid props
   useEffect(() => {
@@ -19,7 +21,7 @@ const ComicGenerator: React.FC<ComicGeneratorProps> = ({ subject, topic }) => {
     }
   }, [topic]);
   
-  const handleGenerateComic = () => {
+  const handleGenerateComic = async () => {
     if (!topic) {
       toast.error("Please enter a lesson topic");
       return;
@@ -27,16 +29,43 @@ const ComicGenerator: React.FC<ComicGeneratorProps> = ({ subject, topic }) => {
     
     setIsLoading(true);
     
-    // Simulate API call with timeout
-    setTimeout(() => {
+    try {
+      // Call Django API to generate comic
+      const result = await api.generateComic(topic, subject);
+      
+      if (result.success && result.data) {
+        setComicData(result.data);
+        setIsGenerated(true);
+        toast.success("Comic generated successfully!");
+      } else {
+        throw new Error(result.error || 'Failed to generate comic');
+      }
+    } catch (error) {
+      console.error('Error generating comic:', error);
+      toast.error("Failed to generate comic. Please try again.");
+    } finally {
       setIsLoading(false);
-      setIsGenerated(true);
-      toast.success("Comic generated successfully!");
-    }, 3000);
+    }
   };
   
-  const handleDownload = () => {
-    toast.success("Comic downloaded successfully!");
+  const handleDownload = async () => {
+    if (!comicData) {
+      toast.error("No comic data available to download");
+      return;
+    }
+    
+    try {
+      const result = await api.saveComic(comicData);
+      
+      if (result.success) {
+        toast.success("Comic downloaded successfully!");
+      } else {
+        throw new Error(result.error || 'Failed to save comic');
+      }
+    } catch (error) {
+      console.error('Error saving comic:', error);
+      toast.error("Failed to save the comic. Please try again.");
+    }
   };
   
   return (
@@ -73,12 +102,12 @@ const ComicGenerator: React.FC<ComicGeneratorProps> = ({ subject, topic }) => {
           </h3>
           
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
-            {[...Array(3)].map((_, i) => (
+            {comicData && comicData.comic_data.panels.map((panel, i) => (
               <div key={i} className="comic-panel">
                 <div className="flex h-full flex-col">
                   <div className="h-3/4 bg-ghana-lightOrange/10 p-2">
                     <div className="flex h-full flex-col items-center justify-center rounded-md border-2 border-dashed border-ghana-lightBrown/40">
-                      {i === 0 && (
+                      {panel.type === 'introduction' && (
                         <div className="text-center">
                           <div className="mx-auto mb-2 rounded-full bg-ghana-green/20 p-3">
                             <svg className="h-10 w-10 text-ghana-green" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -89,7 +118,7 @@ const ComicGenerator: React.FC<ComicGeneratorProps> = ({ subject, topic }) => {
                           <p className="text-xs font-medium text-ghana-brown">Introduction Panel</p>
                         </div>
                       )}
-                      {i === 1 && (
+                      {panel.type === 'example' && (
                         <div className="text-center">
                           <div className="mx-auto mb-2 flex justify-center gap-1">
                             {[...Array(3)].map((_, idx) => (
@@ -102,7 +131,7 @@ const ComicGenerator: React.FC<ComicGeneratorProps> = ({ subject, topic }) => {
                           <p className="text-xs font-medium text-ghana-brown">Example Panel</p>
                         </div>
                       )}
-                      {i === 2 && (
+                      {panel.type === 'practice' && (
                         <div className="text-center">
                           <div className="mx-auto mb-2 rounded-lg bg-ghana-green/20 p-3">
                             <svg className="h-10 w-10 text-ghana-green" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -116,9 +145,7 @@ const ComicGenerator: React.FC<ComicGeneratorProps> = ({ subject, topic }) => {
                   </div>
                   <div className="flex h-1/4 items-center justify-center bg-white p-2">
                     <p className="text-center text-xs">
-                      {i === 0 && `Understanding ${topic.split(' ').slice(0, 2).join(' ')}: First we learn what it means`}
-                      {i === 1 && `Using this concept in daily activities at the market`}
-                      {i === 2 && `Practice: Students try it themselves`}
+                      {panel.caption}
                     </p>
                   </div>
                 </div>
