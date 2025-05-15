@@ -1,5 +1,7 @@
 
-export default function handler(req: any, res: any) {
+import { NextApiRequest, NextApiResponse } from '../../types/next';
+
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
     // Mock empty response for now
     res.status(200).json([]);

@@ -1,5 +1,7 @@
 
-export default function handler(req: any, res: any) {
+import { NextApiRequest, NextApiResponse } from '../../types/next';
+
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
     // Mock successful save response
     res.status(200).json({ success: true });

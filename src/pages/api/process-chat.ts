@@ -1,8 +1,8 @@
 
-import { NextApiRequest, NextApiResponse } from 'next';
+import { NextApiRequest, NextApiResponse } from '../../types/next';
 
 // Emulated Next.js API handler
-export default function handler(req: any, res: any) {
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
     // Mock response for development
     const mockResponse = {
