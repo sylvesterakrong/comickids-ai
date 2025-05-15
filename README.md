@@ -38,7 +38,7 @@
 
 ---
 
-##📖 Usage Guide
+## 📖 Usage Guide
 - **Select a Subject** (e.g., Science or Math)
 
 - **Choose a Topic** (e.g., Fractions, Plant Life Cycle)
