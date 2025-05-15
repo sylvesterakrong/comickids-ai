@@ -21,9 +21,6 @@ export interface ComicData {
   };
 }
 
-// Base API URL - using relative path instead of hardcoded URL
-const API_URL = '/api';
-
 // Error handling helper
 const handleApiError = (error: unknown) => {
   console.error('API Error:', error);
@@ -37,7 +34,7 @@ export const api = {
   // Process chat message
   processChatMessage: async (message: string): Promise<{ success: boolean; data?: ChatResponse; error?: string }> => {
     try {
-      const response = await fetch(`${API_URL}/process-chat/`, {
+      const response = await fetch('/api/process-chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -59,7 +56,7 @@ export const api = {
   // Generate comic
   generateComic: async (topic: string, subject: string): Promise<{ success: boolean; data?: ComicData; error?: string }> => {
     try {
-      const response = await fetch(`${API_URL}/generate-comic/`, {
+      const response = await fetch('/api/generate-comic', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -81,7 +78,7 @@ export const api = {
   // Save comic (for the saved tab functionality)
   saveComic: async (comicData: ComicData): Promise<{ success: boolean; error?: string }> => {
     try {
-      const response = await fetch(`${API_URL}/save-comic/`, {
+      const response = await fetch('/api/save-comic', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -102,7 +99,7 @@ export const api = {
   // Get saved comics
   getSavedComics: async (): Promise<{ success: boolean; data?: ComicData[]; error?: string }> => {
     try {
-      const response = await fetch(`${API_URL}/saved-comics/`);
+      const response = await fetch('/api/saved-comics');
 
       if (!response.ok) {
         throw new Error(`API error: ${response.status}`);
