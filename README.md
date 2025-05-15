@@ -52,7 +52,7 @@ Edit
 npm run dev
 Visit the app at:
 👉 http://localhost:3000 
-
+```
 ---
 
 ##📖 Usage Guide
@@ -98,3 +98,4 @@ Visit the app at:
 - **Built using Google Gemini API**
 
 - **Inspired by research in cognitive theory, educational psychology, and AI-for-Education**
+
