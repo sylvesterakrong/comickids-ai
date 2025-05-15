@@ -1,11 +1,11 @@
-# 📚 Visualizing Understanding  
+# 📚 Visualizing Understanding (comickids-AI)
 *A Generative AI Comic-Based Learning Assistant for Enhancing Concept Engagement in Ghanaian Primary Classrooms*
 
 ---
 
 ## 🌍 Overview
 
-**Visualizing Understanding** is a lightweight web-based educational tool designed to support foundational learning in low-resource primary schools in Ghana. By leveraging **Google's Gemini 2.0 Flash API**, the system generates curriculum-aligned comic strips enriched with culturally relevant visuals to improve engagement and conceptual understanding among students aged **8–11**.
+**Visualizing Understanding (comickids-AI)** is a lightweight web-based educational tool designed to support foundational learning in low-resource primary schools in Ghana. By leveraging **Google's Gemini 2.0 Flash API**, the system generates curriculum-aligned comic strips enriched with culturally relevant visuals to improve engagement and conceptual understanding among students aged **8–11**.
 
 > This project aligns with **UN SDG 4**: _“Ensure inclusive and equitable quality education and promote lifelong learning opportunities for all.”_
 
@@ -29,30 +29,13 @@
 
 ## 🧰 Tech Stack
 
-- **Frontend**: React.js + Next.js  
-- **Backend**: Node.js  
-- **AI Service**: Google Gemini 2.0 Flash API  
+- **Frontend**: Vite.js
+- **Backend**: Django Python 
+- **AI Service**: Google Gemini API  
 - **Database & Storage**: Firebase (Firestore + Local Caching)  
 - **Design**: Tailwind CSS + ShadCN UI  
-- **Deployment**: Vercel / Firebase Hosting
+- **Deployment**: Vercel
 
----
-
-## 🛠️ Installation & Setup
-
-### 1. Clone the Repository
-
-```bash
-git clone https://github.com/your-username/visualizing-understanding.git
-cd visualizing-understanding
-Run Locally
-bash
-Copy
-Edit
-npm run dev
-Visit the app at:
-👉 http://localhost:3000 
-```
 ---
 
 ##📖 Usage Guide
@@ -66,7 +49,7 @@ Visit the app at:
 
 ---
 
-##🧑🏾‍🏫 Target Users
+## 🧑🏾‍🏫 Target Users
 - **Primary school students (ages 8–11)**
 
 - **Rural and low-resource classrooms**
@@ -75,7 +58,7 @@ Visit the app at:
 
 ---
 
-##🎓 Educational Value
+## 🎓 Educational Value
 - **Enhances student engagement and retention**
 
 - **Encourages contextual learning through culturally relevant examples**
@@ -86,13 +69,13 @@ Visit the app at:
 
 ---
 
-##🪪 License
+## 🪪 License
 - **This project is licensed under the MIT License.**
 - **See the LICENSE file for details.**
 
 ---
 
-##🙏 Acknowledgments
+## 🙏 Acknowledgments
 - **Supported by KNUST**
 
 - **Built using Google Gemini API**
