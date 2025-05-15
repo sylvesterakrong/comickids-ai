@@ -21,8 +21,8 @@ export interface ComicData {
   };
 }
 
-// Base API URL - configurable for different environments
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+// Base API URL - using relative path instead of hardcoded URL
+const API_URL = '/api';
 
 // Error handling helper
 const handleApiError = (error: unknown) => {
