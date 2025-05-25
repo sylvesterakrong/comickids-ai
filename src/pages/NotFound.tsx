@@ -15,9 +15,9 @@ const NotFound = () => {
   }, [location.pathname]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <div className="flex items-center gap-.5">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
+      <div className="text-center flex flex-col items-center">
+        <div className="flex items-center gap-2 mb-4">
           <img
             src="/assets/favicon.jpg"
             alt="ComicKids AI Logo"
@@ -26,10 +26,14 @@ const NotFound = () => {
           <h3 className="text-xl font-bold">ComicKids AI</h3>
         </div>
         <h1 className="text-4xl font-bold mb-4">404</h1>
-        <p className="mx-auto max-w-[600px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
-          Oops! The page you're looking for has wandered off into the comic universe.
+        <img 
+        src="https://i.pinimg.com/736x/15/ee/f7/15eef712daf112cc3e59686aca1ad2c7.jpg"
+        className="w-70 h-70 rounded-full object-cover"
+        />
+        <p className="mx-auto max-w-[600px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400 mb-6">
+          Oops! The page you're looking for has wandered off into the comic universe🌌.
         </p>
-        <div className="mx-auto w-full max-w-sm space-y-4">
+        <div className="mx-auto w-full max-w-sm">
           <Button
             onClick={() => navigate('/')}
             className="w-full gap-2"
