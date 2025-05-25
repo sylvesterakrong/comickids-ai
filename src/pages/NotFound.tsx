@@ -33,7 +33,7 @@ const NotFound = () => {
         <p className="mx-auto max-w-[600px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400 mb-6">
           Oops! The page you're looking for has wandered off into the comic universe🌌.
         </p>
-        <div className="mx-auto w-full max-w-sm">
+        <div className="mx-auto w-[60%] max-w-sm">
           <Button
             onClick={() => navigate('/')}
             className="w-full gap-2"
