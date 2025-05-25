@@ -28,7 +28,7 @@ const NotFound = () => {
         <h1 className="text-4xl font-bold mb-4">404</h1>
         <img 
         src="https://i.pinimg.com/736x/15/ee/f7/15eef712daf112cc3e59686aca1ad2c7.jpg"
-        className="w-50 h-50 rounded-full object-cover"
+        className="w-50 h-50 object-cover"
         />
         <p className="mx-auto max-w-[600px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400 mb-6">
           Oops! The page you're looking for has wandered off into the comic universe🌌.
