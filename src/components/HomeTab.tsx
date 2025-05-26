@@ -25,8 +25,6 @@ const HomeTab: React.FC = () => {
 
   const sampleTopics = [
     { title: 'Understanding Fractions', subject: 'Math' },
-    { title: 'Plant Life Cycle', subject: 'Science' },
-    { title: 'Community Helper Roles', subject: 'Citizenship' }
   ];
 
   useEffect(() => {
@@ -110,7 +108,7 @@ const HomeTab: React.FC = () => {
     <div className="container mx-auto max-w-5xl px-4 py-6">
       <div className="mb-8 text-center">
         <h1 className="mb-2 text-3xl font-bold text-ghana-brown">Educational Comics Generator</h1>
-        <p className="text-ghana-brown">Create engaging visual lessons for your classroom</p>
+        <p className="text-ghana-brown">Create engaging visual lessons</p>
       </div>
 
       <div className="mb-8 rounded-xl border border-ghana-lightBrown bg-white p-6 shadow-md">
@@ -171,15 +169,14 @@ const HomeTab: React.FC = () => {
           </div>
         )}
       </div>
-      
-      {showGenerator ? (
+        {showGenerator ? (
         <ComicGenerator subject={subject} topic={topic} />
       ) : (
         <div className="mt-10">
           <h2 className="mb-6 text-xl font-bold text-ghana-green">Sample Comics</h2>
           <div className="space-y-4">
             {sampleTopics.map((sample) => (
-              <SampleComicStrip 
+<SampleComicStrip 
                 key={sample.title} 
                 title={sample.title} 
                 subject={sample.subject} 
@@ -188,6 +185,7 @@ const HomeTab: React.FC = () => {
           </div>
         </div>
       )}
+      
     </div>
   );
 };
