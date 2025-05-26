@@ -25,8 +25,6 @@ const HomeTab: React.FC = () => {
 
   const sampleTopics = [
     { title: 'Understanding Fractions', subject: 'Math' },
-    { title: 'Plant Life Cycle', subject: 'Science' },
-    { title: 'Community Helper Roles', subject: 'Citizenship' }
   ];
 
 
@@ -111,8 +109,8 @@ const HomeTab: React.FC = () => {
   return (
     <div  className="container mx-auto max-w-5xl px-4 py-6">
       <div className="mb-8 text-center">
-        <h1 className="mb-2 text-3xl font-bold text-ghana-brown">Do you need help? 🐼</h1>
-        <p className="text-ghana-brown">Making learning fun through comics</p>
+        <h1 className="mb-2 text-3xl font-bold text-ghana-brown">Educational Comics Generator</h1>
+        <p className="text-ghana-brown">Create engaging visual lessons for your classroom</p>
       </div>
 
       {/* chat box */}
@@ -180,15 +178,14 @@ const HomeTab: React.FC = () => {
         )}
       
       </div>
-      
-      {showGenerator ? (
+        {showGenerator ? (
         <ComicGenerator subject={subject} topic={topic} />
       ) : (
         <div className="mt-10">
           <h2 className="mb-6 text-xl font-bold text-ghana-green">Sample Comics</h2>
           <div className="space-y-4">
             {sampleTopics.map((sample) => (
-              <SampleComicStrip 
+<SampleComicStrip 
                 key={sample.title} 
                 title={sample.title} 
                 subject={sample.subject} 
