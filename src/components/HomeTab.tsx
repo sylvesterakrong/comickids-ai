@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import SampleComicStrip from './SampleComicStrip';
 import ComicGenerator from './ComicGenerator';
@@ -7,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import { api } from '@/services/api';
+import { cn } from '@/lib/utils';
 
 const HomeTab: React.FC = () => {
   const [topic, setTopic] = useState('');
@@ -14,7 +14,7 @@ const HomeTab: React.FC = () => {
   const [messages, setMessages] = useState<Array<{ role: 'user' | 'bot'; content: string }>>([
     { 
       role: 'bot', 
-      content: 'Hello! I can help you create an educational comic. Tell me what topic you want to teach and which subject it belongs to (Math, Science, or Citizenship).' 
+      content: 'Hello! Please tell me which topic you want to understand and which subject it belongs to (Math, Science, or Citizenship).' 
     }
   ]);
   const [userInput, setUserInput] = useState('');
@@ -26,6 +26,8 @@ const HomeTab: React.FC = () => {
   const sampleTopics = [
     { title: 'Understanding Fractions', subject: 'Math' },
   ];
+
+
 
   useEffect(() => {
     scrollToBottom();
@@ -93,7 +95,7 @@ const HomeTab: React.FC = () => {
 
   const handleGenerateClick = () => {
     if (!topic) {
-      toast.error("Please describe your comic topic first");
+      toast.error("Please describe your topic first");
       return;
     }
     
@@ -105,14 +107,16 @@ const HomeTab: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto max-w-5xl px-4 py-6">
+    <div  className="container mx-auto max-w-5xl px-4 py-6">
       <div className="mb-8 text-center">
         <h1 className="mb-2 text-3xl font-bold text-ghana-brown">Educational Comics Generator</h1>
-        <p className="text-ghana-brown">Create engaging visual lessons</p>
+        <p className="text-ghana-brown">Create engaging visual lessons for your classroom</p>
       </div>
 
+      {/* chat box */}
+
       <div className="mb-8 rounded-xl border border-ghana-lightBrown bg-white p-6 shadow-md">
-        <h2 className="mb-4 text-xl font-bold text-ghana-green">Chat with Comic Creator</h2>
+        <h2 className="mb-4 text-xl font-bold text-ghana-green">Chat with Teacher Amma</h2>
         
         {/* Chat messages area */}
         <div className="mb-4 h-80 overflow-y-auto rounded-lg border border-ghana-lightBrown bg-ghana-cream/30 p-4">
@@ -147,12 +151,16 @@ const HomeTab: React.FC = () => {
             value={userInput}
             onChange={(e) => setUserInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Describe the comic you want to create..."
+            placeholder="Describe the topic you do not understand..."
             className="min-h-[60px] flex-grow resize-none border border-ghana-lightBrown text-ghana-brown placeholder:text-ghana-brown/50 focus:border-ghana-green"
           />
           <Button
             onClick={handleSendMessage}
-            className="h-auto bg-ghana-green text-white hover:bg-ghana-lightGreen"
+            disabled={!userInput.trim() || isProcessing}
+            className={cn(
+              "h-auto bg-ghana-green text-white hover:bg-ghana-lightGreen",
+              "disabled:opacity-50 disabled:cursor-not-allowed"
+            )}
           >
             <Send className="h-5 w-5" />
           </Button>
@@ -168,6 +176,7 @@ const HomeTab: React.FC = () => {
             </Button>
           </div>
         )}
+      
       </div>
         {showGenerator ? (
         <ComicGenerator subject={subject} topic={topic} />
