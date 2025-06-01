@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { TextQuote, Home, Save, Wifi, MessageSquare, Menu, X } from 'lucide-react';
 import { cn } from "@/lib/utils";
+import { useNavigate } from 'react-router-dom';
 
 interface NavigationProps {
   activeTab: string;
@@ -12,12 +13,11 @@ const Navigation: React.FC<NavigationProps> = ({ activeTab, setActiveTab }) => {
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const navigate = useNavigate();
 
   const tabs = [
-    { id: 'home', label: 'Home', icon: <Home size={20} /> },
-    { id: 'saved', label: 'Saved Comics', icon: <Save size={20} /> },
-    { id: 'offline', label: 'Offline Mode', icon: <Wifi size={20} /> },
-    { id: 'feedback', label: 'Feedback', icon: <MessageSquare size={20} /> },
+    { id: 'home', label: 'Home', icon: <Home size={20} />, path: '/home' },
+    { id: 'feedback', label: 'Feedback', icon: <MessageSquare size={20} />, path: '/feedback' },
   ];
 
   useEffect(() => {
@@ -61,7 +61,10 @@ const Navigation: React.FC<NavigationProps> = ({ activeTab, setActiveTab }) => {
                 {tabs.map((tab) => (
                   <li key={tab.id}>
                     <button
-                      onClick={() => setActiveTab(tab.id)}
+                      onClick={() => {
+                        setActiveTab(tab.id);
+                        navigate(tab.path);
+                      }}
                       className={cn(
                         "flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium transition-colors",
                         activeTab === tab.id
@@ -93,27 +96,27 @@ const Navigation: React.FC<NavigationProps> = ({ activeTab, setActiveTab }) => {
 
               {/* Mobile Menu Dropdown */}
               {isOpen && (
-                <div 
+                <div
                   ref={mobileMenuRef}
                   className="absolute top-full right-0 w-56 mt-2 py-2 bg-white rounded-lg shadow-lg border border-ghana-lightBrown"
                 >
-                  {tabs.map((tab) => (
-                    <button
-                      key={tab.id}
-                      onClick={() => {
-                        setActiveTab(tab.id);
-                        setIsOpen(false);
-                      }}
-                      className={cn(
-                        "flex items-center gap-2 w-full px-4 py-2 text-left text-sm transition-colors",
-                        activeTab === tab.id
-                          ? "bg-ghana-lightGreen/20 text-ghana-green"
-                          : "text-gray-600 hover:bg-ghana-lightGreen/10 hover:text-ghana-green"
-                      )}
-                    >
-                      {tab.icon}
-                      {tab.label}
-                    </button>
+                  {tabs.map((tab) => (<button
+                    key={tab.id}
+                    onClick={() => {
+                      setActiveTab(tab.id);
+                      navigate(tab.path);
+                      setIsOpen(false);
+                    }}
+                    className={cn(
+                      "flex items-center gap-2 w-full px-4 py-2 text-left text-sm transition-colors",
+                      activeTab === tab.id
+                        ? "bg-ghana-lightGreen/20 text-ghana-green"
+                        : "text-gray-600 hover:bg-ghana-lightGreen/10 hover:text-ghana-green"
+                    )}
+                  >
+                    {tab.icon}
+                    {tab.label}
+                  </button>
                   ))}
                 </div>
               )}

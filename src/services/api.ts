@@ -9,6 +9,8 @@ export interface ChatResponse {
 }
 
 export interface ComicData {
+  title: string;
+  image_url: string;
   id: number;
   topic: string;
   subject: string;
@@ -21,6 +23,11 @@ export interface ComicData {
   };
 }
 
+// Utility to get CSRF token from cookies
+function getCSRFToken(): string | null {
+  const match = document.cookie.match(/csrftoken=([\w-]+)/);
+  return match ? match[1] : null;
+}
 // Error handling helper
 const handleApiError = (error: unknown) => {
   console.error('API Error:', error);
@@ -31,36 +38,19 @@ const handleApiError = (error: unknown) => {
 
 // API methods
 export const api = {
-  // Process chat message
-  processChatMessage: async (message: string): Promise<{ success: boolean; data?: ChatResponse; error?: string }> => {
-    try {
-      const response = await fetch('/api/process-chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ message }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`API error: ${response.status}`);
-      }
-
-      const data = await response.json();
-      return { success: true, data };
-    } catch (error) {
-      return handleApiError(error);
-    }
-  },
 
   // Generate comic
   generateComic: async (topic: string, subject: string): Promise<{ success: boolean; data?: ComicData; error?: string }> => {
     try {
-      const response = await fetch('/api/generate-comic', {
+      const csrftoken = getCSRFToken();
+
+      const response = await fetch('https://comickids-backend-server.onrender.com/api/generate/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'X-CSRFToken': csrftoken || '',
         },
+        credentials: 'include', // Required to include cookies for CSRF
         body: JSON.stringify({ topic, subject }),
       });
 
@@ -74,6 +64,30 @@ export const api = {
       return handleApiError(error);
     }
   },
+
+
+  // // Process chat message
+  // processChatMessage: async (message: string): Promise<{ success: boolean; data?: ChatResponse; error?: string }> => {
+  //   try {
+  //     const response = await fetch('/api/process-chat', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify({ message }),
+  //     });
+
+  //     if (!response.ok) {
+  //       throw new Error(`API error: ${response.status}`);
+  //     }
+
+  //     const data = await response.json();
+  //     return { success: true, data };
+  //   } catch (error) {
+  //     return handleApiError(error);
+  //   }
+  // },
+
 
   // Save comic (for the saved tab functionality)
   saveComic: async (comicData: ComicData): Promise<{ success: boolean; error?: string }> => {

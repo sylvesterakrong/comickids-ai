@@ -1,179 +1,129 @@
+import { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Loader2 } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
 
-import React, { useState, useEffect } from 'react';
-import { DownloadIcon, RefreshCcw } from 'lucide-react';
-import { toast } from 'sonner';
-import { api, ComicData } from '@/services/api';
+export default function ComicGenerator({ prompt: initialPrompt = "" }: { prompt?: string }) {
+  const [prompt, setPrompt] = useState(initialPrompt);
+  const [finalComic, setFinalComic] = useState<{ image_url: string; title: string } | null>(null);
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
 
-interface ComicGeneratorProps {
-  subject: string;
-  topic: string;
-}
-
-const ComicGenerator: React.FC<ComicGeneratorProps> = ({ subject, topic }) => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [isGenerated, setIsGenerated] = useState(false);
-  const [comicData, setComicData] = useState<ComicData | null>(null);
-  
-  // Auto-generate when component mounts with valid props
-  useEffect(() => {
-    if (topic) {
-      handleGenerateComic();
-    }
-  }, [topic]);
-  
   const handleGenerateComic = async () => {
-    if (!topic) {
-      toast.error("Please enter a lesson topic");
-      return;
-    }
-    
-    setIsLoading(true);
-    
+    if (!prompt.trim()) return;
+
+    setLoading(true);
+    setFinalComic(null);
+
     try {
-      // Call Django API to generate comic
-      const result = await api.generateComic(topic, subject);
-      
-      if (result.success && result.data) {
-        setComicData(result.data);
-        setIsGenerated(true);
-        toast.success("Comic generated successfully!");
-      } else {
-        throw new Error(result.error || 'Failed to generate comic');
+      const res = await fetch("/api/generate-comic", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ prompt }),
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to generate comic");
       }
+
+      const data = await res.json();
+
+      if (data.error) {
+        toast({ description: "Something went wrong. Try again." });
+        return;
+      }
+
+      // Expecting data.image_url and data.title from Django
+      setFinalComic({ image_url: data.image_url, title: data.title });
     } catch (error) {
-      console.error('Error generating comic:', error);
-      toast.error("Failed to generate comic. Please try again.");
+      console.error(error);
+      toast({ description: "Error generating comic" });
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
-  
-  const handleDownload = async () => {
-    if (!comicData) {
-      toast.error("No comic data available to download");
-      return;
-    }
-    
-    try {
-      const result = await api.saveComic(comicData);
-      
-      if (result.success) {
-        toast.success("Comic downloaded successfully!");
-      } else {
-        throw new Error(result.error || 'Failed to save comic');
-      }
-    } catch (error) {
-      console.error('Error saving comic:', error);
-      toast.error("Failed to save the comic. Please try again.");
-    }
-  };
-  
+
   return (
-    <div className="rounded-xl border border-ghana-lightBrown bg-white p-6 shadow-md">
-      <div className="mb-6 text-center">
-        <h2 className="mb-2 text-2xl font-bold text-ghana-green">Your Comic</h2>
-        <p className="text-ghana-brown">Visual learning materials for your classroom</p>
-      </div>
-      
-      {!isGenerated ? (
-        <div className="flex flex-col gap-4">
-          <div className="text-center">
-            {/* Loading state */}
-            <div className="inline-flex items-center justify-center rounded-lg bg-ghana-green px-6 py-3 font-semibold text-white">
-              <RefreshCcw className="mr-2 h-4 w-4 animate-spin-slow" />
-              <span className="loading-dots">Generating your comic</span>
-            </div>
-          </div>
-          
-          <div className="mt-6">
-            <div className="mb-2 h-4 w-full animate-pulse rounded-full bg-ghana-lightBrown/30"></div>
-            <div className="h-4 w-3/4 animate-pulse rounded-full bg-ghana-lightBrown/30"></div>
-            <div className="mt-6 grid grid-cols-3 gap-4">
-              {[...Array(3)].map((_, i) => (
-                <div key={i} className="aspect-[4/3] animate-pulse rounded-lg bg-ghana-lightBrown/30"></div>
-              ))}
-            </div>
-          </div>
+    <div className="max-w-2xl mx-auto py-10 px-4">
+      <h1 className="text-2xl font-bold mb-6 text-center">ComicKids AI</h1>
+
+      <div className="space-y-4">
+        <div>
+          <Label htmlFor="prompt">Enter your story prompt</Label>
+          <Input
+            id="prompt"
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            placeholder="e.g. A child learning to farm with Grandpa"
+            className="mt-1"
+          />
         </div>
-      ) : (
-        <div className="space-y-6">
-          <h3 className="text-xl font-semibold text-ghana-brown">
-            {topic} <span className="text-sm text-ghana-orange">({subject})</span>
-          </h3>
-          
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
-            {comicData && comicData.comic_data.panels.map((panel, i) => (
-              <div key={i} className="comic-panel">
-                <div className="flex h-full flex-col">
-                  <div className="h-3/4 bg-ghana-lightOrange/10 p-2">
-                    <div className="flex h-full flex-col items-center justify-center rounded-md border-2 border-dashed border-ghana-lightBrown/40">
-                      {panel.type === 'introduction' && (
-                        <div className="text-center">
-                          <div className="mx-auto mb-2 rounded-full bg-ghana-green/20 p-3">
-                            <svg className="h-10 w-10 text-ghana-green" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                              <circle cx="12" cy="12" r="10"/>
-                              <path d="M12 8v8m-4-4h8"/>
-                            </svg>
-                          </div>
-                          <p className="text-xs font-medium text-ghana-brown">Introduction Panel</p>
-                        </div>
-                      )}
-                      {panel.type === 'example' && (
-                        <div className="text-center">
-                          <div className="mx-auto mb-2 flex justify-center gap-1">
-                            {[...Array(3)].map((_, idx) => (
-                              <div 
-                                key={idx}
-                                className="h-10 w-6 rounded-md bg-ghana-orange/30"
-                              />
-                            ))}
-                          </div>
-                          <p className="text-xs font-medium text-ghana-brown">Example Panel</p>
-                        </div>
-                      )}
-                      {panel.type === 'practice' && (
-                        <div className="text-center">
-                          <div className="mx-auto mb-2 rounded-lg bg-ghana-green/20 p-3">
-                            <svg className="h-10 w-10 text-ghana-green" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                              <path d="M5 3v4M19 3v4M5 21v-2m14 0v2M3 7h18M9 11h6m-6 4h6"/>
-                            </svg>
-                          </div>
-                          <p className="text-xs font-medium text-ghana-brown">Practice Panel</p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex h-1/4 items-center justify-center bg-white p-2">
-                    <p className="text-center text-xs">
-                      {panel.caption}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-          
-          <div className="flex flex-wrap gap-4 pt-2">
-            <button
-              onClick={() => setIsGenerated(false)}
-              className="inline-flex items-center rounded-lg border border-ghana-green bg-white px-4 py-2 text-sm font-medium text-ghana-green transition-colors hover:bg-ghana-green/10 focus:outline-none focus:ring-2 focus:ring-ghana-green focus:ring-offset-2"
+
+        <Button onClick={handleGenerateComic} disabled={loading || !prompt.trim()} className="w-full">
+          {loading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Generating...
+            </>
+          ) : (
+            "Generate Comic"
+          )}
+        </Button>
+      </div>
+
+      {/* Loading Placeholder */}
+      {loading && (
+        <div className="mt-10 flex flex-col items-center">
+          <div className="animate-pulse bg-muted aspect-[4/3] w-full max-w-lg rounded-xl h-64" />
+          <p className="mt-4 text-muted-foreground">Generating your comic...</p>
+        </div>
+      )}
+
+      {/* Final Comic */}
+      {finalComic && (
+        <div className="mt-10 border rounded-xl overflow-hidden shadow-lg flex flex-col items-center">
+          <h2 className="text-xl font-bold mb-2 text-center">{finalComic.title}</h2>
+          <img src={finalComic.image_url} alt={finalComic.title} className="w-full object-cover" />
+          <div className="flex justify-center gap-2 mt-4 mb-2">
+            <Button
+              variant="outline"
+              onClick={() => {
+                const link = document.createElement("a");
+                link.href = finalComic.image_url;
+                link.download = `${finalComic.title || "comic-kids-panel"}.jpg`;
+                link.click();
+                toast({ description: "Comic downloaded!" });
+              }}
             >
-              <RefreshCcw className="mr-2 h-4 w-4" />
-              Generate New Comic
-            </button>
-            
-            <button
-              onClick={handleDownload}
-              className="inline-flex items-center rounded-lg bg-ghana-orange px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-ghana-lightOrange focus:outline-none focus:ring-2 focus:ring-ghana-orange focus:ring-offset-2"
+              Download
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={async () => {
+                if (navigator.share) {
+                  try {
+                    await navigator.share({
+                      title: finalComic.title,
+                      text: "Check out this comic I made with ComicKids AI!",
+                      url: finalComic.image_url,
+                    });
+                  } catch (err) {
+                    console.error("Sharing failed:", err);
+                  }
+                } else {
+                  alert("Sharing not supported on this browser.");
+                }
+              }}
             >
-              <DownloadIcon className="mr-2 h-4 w-4" />
-              Download Comic
-            </button>
+              Share
+            </Button>
           </div>
         </div>
       )}
     </div>
   );
-};
-
-export default ComicGenerator;
+}
