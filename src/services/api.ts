@@ -93,39 +93,39 @@ export const api = {
 
 
   // Save comic (for the saved tab functionality)
-  saveComic: async (comicData: ComicData): Promise<{ success: boolean; error?: string }> => {
-    try {
-      const response = await fetch('/api/save-comic', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(comicData),
-      });
+  // saveComic: async (comicData: ComicData): Promise<{ success: boolean; error?: string }> => {
+  //   try {
+  //     const response = await fetch('/api/save-comic', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify(comicData),
+  //     });
 
-      if (!response.ok) {
-        throw new Error(`API error: ${response.status}`);
-      }
+  //     if (!response.ok) {
+  //       throw new Error(`API error: ${response.status}`);
+  //     }
 
-      return { success: true };
-    } catch (error) {
-      return handleApiError(error);
-    }
-  },
+  //     return { success: true };
+  //   } catch (error) {
+  //     return handleApiError(error);
+  //   }
+  // },
 
-  // Get saved comics
-  getSavedComics: async (): Promise<{ success: boolean; data?: ComicData[]; error?: string }> => {
-    try {
-      const response = await fetch('/api/saved-comics');
+  // // Get saved comics
+  // getSavedComics: async (): Promise<{ success: boolean; data?: ComicData[]; error?: string }> => {
+  //   try {
+  //     const response = await fetch('/api/saved-comics');
 
-      if (!response.ok) {
-        throw new Error(`API error: ${response.status}`);
-      }
+  //     if (!response.ok) {
+  //       throw new Error(`API error: ${response.status}`);
+  //     }
 
-      const data = await response.json();
-      return { success: true, data };
-    } catch (error) {
-      return handleApiError(error);
-    }
-  },
+  //     const data = await response.json();
+  //     return { success: true, data };
+  //   } catch (error) {
+  //     return handleApiError(error);
+    // }
+  // },
 };

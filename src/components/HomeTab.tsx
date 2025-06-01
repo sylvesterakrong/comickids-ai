@@ -1,20 +1,30 @@
 import React, { useState, useRef, useEffect } from 'react';
 import SampleComicStrip from './SampleComicStrip';
-import { Send, Bot, User, Loader2 } from 'lucide-react';
+import { Send, Bot, User, Loader2, RotateCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 import { api } from '@/services/api';
 
+interface Message {
+  role: 'user' | 'bot';
+  content: string;
+  comic?: { image_url: string; title: string } | null;
+  loading?: boolean;
+  error?: boolean;
+  originalPrompt?: string;
+}
+
 const HomeTab: React.FC = () => {
-  const [messages, setMessages] = useState<
-    Array<{ role: 'user' | 'bot'; content: string; comic?: { image_url: string; title: string } | null; loading?: boolean }>
-  >([
-    {
-      role: 'bot',
-      content: 'Hello! Please tell me which topic you want to understand and subject.🙂'
-    }
-  ]); const [userInput, setUserInput] = useState('');
+  const [messages, setMessages] = useState<Message[]>(
+    [
+      {
+        role: 'bot',
+        content: 'Hello! Please tell me which topic you want to understand and subject.🙂'
+      }
+    ]
+  );
+  const [userInput, setUserInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [loadingMessageIndex, setLoadingMessageIndex] = useState(0);
   const loadingMessages = [
@@ -133,13 +143,60 @@ const HomeTab: React.FC = () => {
           ...updated,
           {
             role: 'bot',
-            content: 'Sorry, there was an error generating your comic. Please try again.'
+            content: 'Sorry, there was an error generating your comic. Click the retry button below to try again.',
+            error: true,
+            originalPrompt: userInput
           }
         ];
       });
     } finally {
       setIsLoading(false);
       setUserInput('');
+    }
+  };
+
+  const handleRetry = async (originalPrompt: string) => {
+    if (isLoading) return;
+
+    setIsLoading(true);
+    // Update the error message to show loading state
+    setMessages(prev => prev.map(msg =>
+      msg.originalPrompt === originalPrompt ?
+        { ...msg, content: 'Retrying...', loading: true, error: false } :
+        msg
+    ));
+
+    try {
+      const { success, data, error } = await api.generateComic(originalPrompt);
+
+      setMessages(prev => prev.map(msg =>
+        msg.originalPrompt === originalPrompt ?
+          {
+            role: 'bot',
+            content: success ? (data?.title || 'Here is your comic!') : (error || 'Failed to generate comic'),
+            comic: success && data ? {
+              image_url: data.image_url,
+              title: data.title
+            } : null,
+            loading: false,
+            error: !success
+          } :
+          msg
+      ));
+    } catch (err) {
+      setMessages(prev => prev.map(msg =>
+        msg.originalPrompt === originalPrompt ?
+          {
+            role: 'bot',
+            content: 'Sorry, there was an error generating your comic. Click the retry button to try again.',
+            loading: false,
+            error: true,
+            originalPrompt
+          } :
+          msg
+      ));
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -175,8 +232,8 @@ const HomeTab: React.FC = () => {
                 )}
               >
                 {msg.role === 'bot' && <Bot className="mt-1 h-4 w-4 flex-shrink-0" />}
-                <div>
-                  <p className="text-sm">                    {msg.loading ? (
+                <div>                  <p className="text-sm flex items-center gap-2">
+                  {msg.loading ? (
                     <span className="flex items-center gap-2">
                       <Loader2 className="animate-spin h-4 w-4" />
                       <span className="transition-opacity duration-500">
@@ -184,9 +241,22 @@ const HomeTab: React.FC = () => {
                       </span>
                     </span>
                   ) : (
-                    msg.content
+                    <>
+                      {msg.content}
+                      {msg.error && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-6 w-6 text-red-500 hover:text-red-600 hover:bg-red-100/50"
+                          onClick={() => msg.originalPrompt && handleRetry(msg.originalPrompt)}
+                          title="Retry"
+                        >
+                          <RotateCw className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </>
                   )}
-                  </p>
+                </p>
                   {msg.loading ? (
                     <div className="mt-4 flex flex-col items-center w-full">
                       <div className="animate-pulse bg-muted aspect-[4/3] w-full max-w-lg rounded-xl h-48" />
