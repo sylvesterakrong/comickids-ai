@@ -12,7 +12,7 @@ const HomeTab: React.FC = () => {
   >([
     {
       role: 'bot',
-      content: 'Hello! Please tell me which topic you want to understand and subject.'
+      content: 'Hello! Please tell me which topic you want to understand and subject.🙂'
     }
   ]); const [userInput, setUserInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -39,7 +39,7 @@ const HomeTab: React.FC = () => {
       if (interval) clearInterval(interval);
       setLoadingMessageIndex(0);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]);
 
   const sampleTopics = [
@@ -58,6 +58,15 @@ const HomeTab: React.FC = () => {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+  const isGreeting = (text: string) => {
+    const greetings = ['hello', 'hi', 'good morning', 'good afternoon', 'good evening', 'please', 'hey'];
+    return greetings.some(greeting => text.toLowerCase().includes(greeting));
+  };
+
+  const isThanking = (text: string) => {
+    const thankYouPhrases = ['thank you', 'thanks', 'thank', 'appreciate', 'grateful'];
+    return thankYouPhrases.some(phrase => text.toLowerCase().includes(phrase));
+  };
 
   const handleSendMessage = async () => {
     if (!userInput.trim() || isLoading) return;
@@ -67,6 +76,32 @@ const HomeTab: React.FC = () => {
       ...prev,
       { role: 'user', content: userInput }
     ]);
+
+    // Check for greetings or thank you
+    if (isGreeting(userInput)) {
+      setMessages(prev => [
+        ...prev,
+        {
+          role: 'bot',
+          content: 'Charley, how are you doing? 🙂 Please tell me what topic you want me to help you understand.'
+        }
+      ]);
+      setUserInput('');
+      return;
+    }
+
+    if (isThanking(userInput)) {
+      setMessages(prev => [
+        ...prev,
+        {
+          role: 'bot',
+          content: 'You\'re welcome! 😊 Is there anything else you\'d like to learn about?'
+        }
+      ]);
+      setUserInput('');
+      return;
+    }
+
     setIsLoading(true);
 
     // Add loading bot message
@@ -264,7 +299,7 @@ const HomeTab: React.FC = () => {
             <Send className="h-5 w-5" />
           </Button>
         </div>
-          <h4 className="mt-2 text-xs font-light text-primary text-center">**ComicKids-AI can make mistakes. Always check important info.</h4>
+        <h4 className="mt-2 text-xs font-light text-primary text-center">**ComicKids-AI can make mistakes. Always check important info.</h4>
       </div>
 
       {/* Sample Comics */}
