@@ -1,4 +1,3 @@
-
 import { toast } from 'sonner';
 
 // Interface definitions
@@ -28,6 +27,7 @@ function getCSRFToken(): string | null {
   const match = document.cookie.match(/csrftoken=([\w-]+)/);
   return match ? match[1] : null;
 }
+
 // Error handling helper
 const handleApiError = (error: unknown) => {
   console.error('API Error:', error);
@@ -38,11 +38,11 @@ const handleApiError = (error: unknown) => {
 
 // API methods
 export const api = {
-
   // Generate comic
-  generateComic: async (topic: string, subject: string): Promise<{ success: boolean; data?: ComicData; error?: string }> => {
+  generateComic: async (topic: string): Promise<{ success: boolean; data?: ComicData; error?: string }> => {
     try {
       const csrftoken = getCSRFToken();
+      console.log('Sending request with prompt:', topic); // Debug logging
 
       const response = await fetch('https://comickids-backend-server.onrender.com/api/generate/', {
         method: 'POST',
@@ -50,15 +50,18 @@ export const api = {
           'Content-Type': 'application/json',
           'X-CSRFToken': csrftoken || '',
         },
-        credentials: 'include', // Required to include cookies for CSRF
-        body: JSON.stringify({ topic, subject }),
+        credentials: 'include',
+        body: JSON.stringify({ prompt: topic }), // Changed to match the backend expectation
       });
 
       if (!response.ok) {
-        throw new Error(`API error: ${response.status}`);
+        const errorData = await response.text();
+        console.error('Server response:', errorData); // Debug logging
+        throw new Error(`API error: ${response.status} - ${errorData}`);
       }
 
       const data = await response.json();
+      console.log('Server response:', data); // Debug logging
       return { success: true, data };
     } catch (error) {
       return handleApiError(error);

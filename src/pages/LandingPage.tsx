@@ -27,7 +27,7 @@ const LandingPage = () => {
                         </h2>
                         <p className="text-lg text-gray-600 mb-8 max-w-xl">
                             Transform any educational topic into engaging comic strips.
-                            Perfect for students, teachers, and visual learners in Ghana.
+                            Perfect for learners  and teachers in Ghana❤️.
                         </p>
                         <Button
                             onClick={() => navigate('/home')}
@@ -53,15 +53,17 @@ const LandingPage = () => {
                     </div>
 
                     {/* Right side - Image */}
-                    <div className="flex-1 relative">
-                        <div className="relative rounded-lg overflow-hidden shadow-xl">
-                            <img
-                                src="https://i.pinimg.com/736x/15/ee/f7/15eef712daf112cc3e59686aca1ad2c7.jpg"
-                                alt="Educational Comics"
-                                className="w-full h-auto rounded-lg"
-                            />
-                            <div className="absolute inset-0 bg-primary/10 rounded-lg"></div>
-                        </div>
+                    <div className="flex-1 relative">                        
+                        <div 
+                            className="relative rounded-lg overflow-hidden shadow-xl transform hover:rotate-0 transition-transform duration-500" 
+                            style={{ transform: 'rotate(4deg)' }}>
+                        <img
+                            src="/assets/comic-samples/comic4.png"
+                            alt="Educational Comics"
+                            className="w-full h-[600px] rounded-lg transform scale-105"
+                        />
+                        <div className="absolute inset-0 bg-primary/10 rounded-lg"></div>
+                    </div>
                     </div>
                 </div>
             </main>

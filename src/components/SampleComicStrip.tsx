@@ -17,7 +17,7 @@ const SampleComicStrip: React.FC<SampleComicStripProps> = ({ title, subject, ima
         <img
           src={imageUrl}
           alt={`${title} comic strip`}
-          className="w-full h-[500px] object-cover rounded-lg" // Fixed height
+          className="w-full h-[500px] object-contain rounded-lg" // Fixed height
         />
       </div>
     </div>
