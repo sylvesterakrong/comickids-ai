@@ -71,7 +71,7 @@
 
 ## 🪪 License
 - **This project is licensed under the Apache License.**
-- **See the LICENSE [license] file for details.**
+- **See the LICENSE file for details.**
 
 ---
 
