@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 import { api } from '@/services/api';
+import AutoRetryImage from '@/hooks/AutoRetryImageProps';
 
 interface Message {
   role: 'user' | 'bot';
@@ -265,13 +266,19 @@ const HomeTab: React.FC = () => {
                   ) : msg.comic && (
                     <div className="mt-4">
                       <div className="rounded-xl overflow-hidden shadow-lg">
-                        {/* <h3 className="font-semibold mb-2 text-primary">{msg.comic.title}</h3> */}
-                        <img
+                        <AutoRetryImage
                           src={msg.comic.image_url}
                           alt={msg.comic.title}
                           className="w-full max-w-md rounded-lg"
-                          onError={(e) => {
-                            e.currentTarget.src = "/placeholder.svg";
+                          maxRetries={3}
+                          initialDelay={1000}
+                          onError={(error) => {
+                            console.error('Comic image failed to load:', error);
+                            // Optional: Add toast notification
+                            // toast.error('Failed to load comic image');
+                          }}
+                          onSuccess={() => {
+                            console.log('Comic image loaded successfully');
                           }}
                         />
                         <div className="flex justify-end gap-2 mt-2">
@@ -281,12 +288,13 @@ const HomeTab: React.FC = () => {
                             className="hover:text-primary"
                             onClick={() => {
                               const link = document.createElement("a");
-                              link.href = msg.comic.image_url;
-                              link.download = `${msg.comic.title || "comic-kids-panel"}.jpg`;
+                              link.href = msg.comic!.image_url;
+                              link.download = `${msg.comic!.title || "comic-kids-panel"}.jpg`;
                               link.click();
                             }}
                             title="Download Comic"
                           >
+                            {/* Download icon */}
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
                               width="18"
@@ -311,9 +319,9 @@ const HomeTab: React.FC = () => {
                               if (navigator.share) {
                                 try {
                                   await navigator.share({
-                                    title: msg.comic.title,
+                                    title: msg.comic!.title,
                                     text: "Check out this comic I made with ComicKids AI!",
-                                    url: msg.comic.image_url,
+                                    url: msg.comic!.image_url,
                                   });
                                 } catch (err) {
                                   console.error("Sharing failed:", err);
@@ -322,6 +330,7 @@ const HomeTab: React.FC = () => {
                             }}
                             title="Share Comic"
                           >
+                            {/* Share icon */}
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
                               width="18"
