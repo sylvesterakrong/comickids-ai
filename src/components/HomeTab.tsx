@@ -70,12 +70,19 @@ const HomeTab: React.FC = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
   const isGreeting = (text: string) => {
-    const greetings = ['hello', 'hi', 'good morning', 'good afternoon', 'good evening', 'please', 'hey'];
-    return greetings.some(greeting => text.toLowerCase().includes(greeting));
+    // We will now check for whole words to avoid partial matches like "hi" in "history".
+    const greetings = ['hello', 'hi', 'good morning', 'good afternoon', 'good evening', 'hey', 'wossop', 'waguan', 'sup', 'yo', 'howdy', 'greetings'];
+
+    // Create a regular expression from the greetings array.
+    // The `\b` is a "word boundary". It ensures we match whole words only.
+    // The 'i' flag makes the search case-insensitive.
+    const greetingRegex = new RegExp(`\\b(${greetings.join('|')})\\b`, 'i');
+
+    return greetingRegex.test(text);
   };
 
   const isThanking = (text: string) => {
-    const thankYouPhrases = ['thank you', 'thanks', 'thank', 'appreciate', 'grateful'];
+    const thankYouPhrases = ['thank you', 'thanks', 'thank', 'appreciate', 'grateful', 'preciate', 'much obliged', 'many thanks', 'ta', 'cheers'];
     return thankYouPhrases.some(phrase => text.toLowerCase().includes(phrase));
   };
 
