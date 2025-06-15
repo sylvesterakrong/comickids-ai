@@ -64,6 +64,11 @@ const HomeTab: React.FC = () => {
       subject: 'Colours of the Rainbow',
       imageUrl: '/assets/comic-samples/comic1.png'
     },
+    {
+      title: 'English Language',
+      subject: 'Compound sentences',
+      imageUrl: '/assets/comic-samples/comic7.png'
+    },
   ];
 
   useEffect(() => {
